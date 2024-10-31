@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Acortador de URL</h1>
+        <form id="shortenForm">
+            <label for="url">Ingresa la URL que deseas acortar:</label>
+            <input type="text" id="url" name="url" placeholder="http://example.com" required>
+            <button type="submit">Acortar URL</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script>
+        // Lógica para enviar datos a Flask y recibir la URL acortada
+        document.getElementById('shortenForm').onsubmit = async (event) => {
+            event.preventDefault(); // Evitar recargar la página
+            const url = document.getElementById('url').value;
+
+            const response = await fetch('/shorten', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url })
+            });
+
+            const data = await response.json();
+            if (data.short_url) {
+                document.getElementById('result').innerHTML = `<p>URL Acortada: <a href="${data.short_url}" target="_blank">${data.short_url}</a></p>`;
+            } else {
+                document.getElementById('result').innerHTML = `<p>Error: ${data.error}</p>`;
+            }
+        };
+    </script>
+</body>
+</html>
