@@ -33,26 +33,32 @@ def index():
 # Endpoint to shorten a URL
 @app.route('/shorten', methods=['POST'])
 def shorten_url():
-    # Get the JSON data from the request
-    data = request.get_json()
-    original_url = data.get("url")  # Extract the original URL from the request data
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
+        original_url = data.get("url")  # Extract the original URL
 
-    # Check if the original URL already exists in the database
-    existing_url = collection.find_one({"original_url": original_url})
-    if existing_url:
-        # If it exists, return the existing short URL
-        return jsonify({"short_url": request.host_url + existing_url["short_id"]})
+        # Check if original_url is provided
+        if not original_url:
+            return jsonify({"error": "No URL provided"}), 400
 
-    # Generate a unique short ID
-    short_id = generate_short_id()
-    # Ensure that the generated short ID is unique in the collection
-    while collection.find_one({"short_id": short_id}):
+        existing_url = collection.find_one({"original_url": original_url})
+        if existing_url:
+            return jsonify({"short_url": request.host_url + existing_url["short_id"]})
+
         short_id = generate_short_id()
+        while collection.find_one({"short_id": short_id}):
+            short_id = generate_short_id()
 
-    # Insert the new short URL mapping into the database
-    collection.insert_one({"short_id": short_id, "original_url": original_url})
-    short_url = request.host_url + short_id  # Construct the full short URL
-    return jsonify({"short_url": short_url})  # Return the short URL as JSON response
+        collection.insert_one({"short_id": short_id, "original_url": original_url})
+        short_url = request.host_url + short_id
+        return jsonify({"short_url": short_url}), 201  # Return a 201 Created status
+
+    except Exception as e:
+        # Log the exception for debugging purposes
+        print(f"Error shortening URL: {e}")
+        return jsonify({"error": "An error occurred while processing your request."}), 500
+
 
 # Endpoint to redirect to the original URL using the short ID
 @app.route('/<short_id>')
