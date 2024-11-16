@@ -57,7 +57,7 @@ users who want to shorten and manage links for easy sharing.
 
 ### Technologies Used 
   - **Python** and **Flask** for the backend logic. 
-  - HTML for the user interface.
+  - **HTML** for the user interface.
   - **MongoDB** for URL and data management.
   
 ---
