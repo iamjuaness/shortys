@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>URL Shortener</title>
+    <title>Shortys</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon"  type="image/png" href="../static/125130.png">
 </head>
 <body>
     <div class="container">
-        <h1>Acortador de URL</h1>
+        <div>
+            <img src="../static/125130.png" width="50" height="50">
+            <h1>Shortys</h1>
+        </div>
         <form id="shortenForm">
             <label for="url">Ingresa la URL que deseas acortar:</label>
             <input type="text" id="url" name="url" placeholder="http://example.com" required>
